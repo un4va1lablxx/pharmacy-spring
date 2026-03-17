@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация - Аптека Сельдерей</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+        background: white;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .register-container {
+        max-width: 450px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+        border: 2px solid #e8f5e8;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .register-header {
+        background: linear-gradient(135deg, #44b216 0%, #5fd62d 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .register-body {
+        padding: 40px;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #44b216;
+        box-shadow: 0 0 0 0.2rem rgba(68, 178, 22, 0.25);
+    }
+
+    .btn-register {
+        background: #44b216;
+        border: 2px solid #44b216;
+        color: white;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-register:hover {
+        background: #389611;
+        border-color: #389611;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-success {
+        border: 2px solid #44b216;
+        color: #44b216;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-outline-success:hover {
+        background: #44b216;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .back-to-home {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+
+    .back-to-login {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    @media (max-width: 576px) {
+        body {
+            padding: 15px;
+            align-items: flex-start;
+            padding-top: 80px;
+        }
+
+        .register-container {
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .register-body {
+            padding: 30px 25px;
+        }
+
+        .back-to-home,
+        .back-to-login {
+            position: fixed;
+            top: 10px;
+        }
+
+        .back-to-home {
+            left: 10px;
+        }
+
+        .back-to-login {
+            right: 10px;
+        }
+
+        .back-to-home .btn,
+        .back-to-login .btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+    }
+
+    .input-group-text {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-right: none;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+    }
+
+    .input-group .form-control:focus {
+        border-left: none;
+    }
+
+    .password-requirements {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .requirement {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
+    }
+
+    .requirement.valid {
+        color: #28a745;
+    }
+
+    .requirement.invalid {
+        color: #6c757d;
+    }
+
+    .requirement i {
+        margin-right: 5px;
+        font-size: 0.7rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="back-to-home">
+  <a th:href="@{/}" class="btn btn-outline-success">
+    <i class="fas fa-arrow-left me-2"></i>На главную
+  </a>
+</div>
+
+<div class="register-container">
+  <div class="register-header">
+    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Регистрация</h3>
+  </div>
+  <div class="register-body">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <span th:text="${success}"></span>
+    </div>
+    <form th:action="@{/register}" method="post">
+      <div class="mb-3">
+        <label for="username" class="form-label">Логин *</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-user text-muted"></i>
+                    </span>
+          <input type="text" class="form-control border-start-0" id="username" name="username"
+                 placeholder="Придумайте логин" required>
+        </div>
+        <div class="form-text">Логин должен содержать от 3 до 20 символов</div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="lastName" class="form-label">Фамилия *</label>
+          <input type="text" class="form-control" id="lastName" name="lastName"
+                 placeholder="Иванов" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="firstName" class="form-label">Имя *</label>
+          <input type="text" class="form-control" id="firstName" name="firstName"
+                 placeholder="Иван" required>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="middleName" class="form-label">Отчество</label>
+          <input type="text" class="form-control" id="middleName" name="middleName"
+                 placeholder="Иванович">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email адрес *</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-envelope text-muted"></i>
+                    </span>
+          <input type="email" class="form-control border-start-0" id="email" name="email"
+                 placeholder="ваш@email.com" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">Телефон</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-phone text-muted"></i>
+                    </span>
+          <input type="tel" class="form-control border-start-0" id="phone" name="phone"
+                 placeholder="+7 (999) 999-99-99">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Пароль *</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-lock text-muted"></i>
+                    </span>
+          <input type="password" class="form-control border-start-0" id="password" name="password"
+                 placeholder="Не менее 6 символов" required>
+          <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword('password')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="password-requirements">
+          <div class="requirement invalid" id="lengthReq">
+            <i class="fas fa-circle"></i> Не менее 6 символов
+          </div>
+          <div class="requirement invalid" id="numberReq">
+            <i class="fas fa-circle"></i> Содержит цифры
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="confirmPassword" class="form-label">Подтвердите пароль *</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-lock text-muted"></i>
+                    </span>
+          <input type="password" class="form-control border-start-0" id="confirmPassword" name="confirmPassword"
+                 placeholder="Повторите пароль" required>
+          <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword('confirmPassword')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="form-text" id="passwordMatchText">Пароли должны совпадать</div>
+      </div>
+
+      <button type="submit" class="btn btn-register mb-3" id="submitBtn" disabled>
+        <i class="fas fa-user-plus me-2"></i>Зарегистрироваться
+      </button>
+    </form>
+
+    <div class="text-center">
+      <p class="mb-0">Уже есть аккаунт?
+        <a th:href="@{/login}" class="text-success fw-bold text-decoration-none">Войдите</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function togglePassword(fieldId) {
+      const passwordInput = document.getElementById(fieldId);
+      const icon = document.querySelector(`#${fieldId} ~ button i`);
+
+      if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+      } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+      }
+  }
+
+  function validatePassword(password) {
+      const requirements = {
+          length: password.length >= 6,
+          number: /\d/.test(password)
+      };
+      document.getElementById('lengthReq').className = requirements.length ?
+          'requirement valid' : 'requirement invalid';
+      document.getElementById('numberReq').className = requirements.number ?
+          'requirement valid' : 'requirement invalid';
+
+      return requirements.length && requirements.number;
+  }
+
+  function checkPasswordMatch() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const matchText = document.getElementById('passwordMatchText');
+
+      if (confirmPassword === '') {
+          matchText.textContent = 'Пароли должны совпадать';
+          matchText.className = 'form-text';
+          return false;
+      } else if (password === confirmPassword) {
+          matchText.textContent = 'Пароли совпадают';
+          matchText.className = 'form-text text-success';
+          return true;
+      } else {
+          matchText.textContent = 'Пароли не совпадают';
+          matchText.className = 'form-text text-danger';
+          return false;
+      }
+  }
+
+  function updateSubmitButton() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      const isPasswordValid = validatePassword(password);
+      const isPasswordMatch = checkPasswordMatch();
+
+      document.getElementById('submitBtn').disabled = !(isPasswordValid && isPasswordMatch);
+  }
+
+  document.querySelector('form').addEventListener('submit', function(e) {
+      const username = document.getElementById('username').value;
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!username || !firstName || !lastName || !email || !password || !confirmPassword) {
+          e.preventDefault();
+          showNotification('Пожалуйста, заполните все обязательные поля', 'error');
+          return;
+      }
+
+      if (!validatePassword(password)) {
+          e.preventDefault();
+          showNotification('Пароль не соответствует требованиям', 'error');
+          return;
+      }
+
+      if (!checkPasswordMatch()) {
+          e.preventDefault();
+          showNotification('Пароли не совпадают', 'error');
+          return;
+      }
+
+      if (!isValidEmail(email)) {
+          e.preventDefault();
+          showNotification('Пожалуйста, введите корректный email', 'error');
+          return;
+      }
+  });
+
+  function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+  }
+
+  function showNotification(message, type) {
+      const existingNotifications = document.querySelectorAll('.custom-notification');
+      existingNotifications.forEach(notification => notification.remove());
+
+      const notification = document.createElement('div');
+      notification.className = `custom-notification alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+      notification.style.cssText = `
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          min-width: 300px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          border: none;
+          border-radius: 10px;
+      `;
+      notification.innerHTML = `
+          <div class="d-flex align-items-center">
+              <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+              <span>${message}</span>
+          </div>
+      `;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+          if (notification.parentNode) {
+              notification.remove();
+          }
+      }, 5000);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('password').addEventListener('input', updateSubmitButton);
+      document.getElementById('confirmPassword').addEventListener('input', updateSubmitButton);
+
+      document.getElementById('phone').addEventListener('input', function(e) {
+          let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+          e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+      });
+  });
+</script>
+</body>
+</html>

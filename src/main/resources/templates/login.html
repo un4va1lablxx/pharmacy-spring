@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>вход - аптека сельдерей</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+        background: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        margin: 0;
+    }
+
+    .login-container {
+        max-width: 400px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .login-header {
+        background: linear-gradient(135deg, #44b216 0%, #5fd62d 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .login-body {
+        padding: 40px;
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #44b216;
+        box-shadow: 0 0 0 0.2rem rgba(68, 178, 22, 0.25);
+    }
+
+    .btn-login {
+        background: #44b216;
+        border: 2px solid #44b216;
+        color: white;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-login:hover {
+        background: #389611;
+        border-color: #389611;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-success {
+        border: 2px solid #44b216;
+        color: #44b216;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-outline-success:hover {
+        background: #44b216;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .social-login {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: white;
+    }
+
+    .social-login:hover {
+        border-color: #44b216;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(68, 178, 22, 0.1);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 30px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .divider-text {
+        padding: 0 15px;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .forgot-password {
+        color: #44b216;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+
+    .forgot-password:hover {
+        color: #389611;
+        text-decoration: underline;
+    }
+
+    .back-to-home {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+    }
+
+    @media (max-width: 576px) {
+        body {
+            padding: 15px;
+            align-items: flex-start;
+            padding-top: 60px;
+        }
+
+        .login-container {
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .login-body {
+            padding: 30px 25px;
+        }
+
+        .back-to-home {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+
+        .back-to-home .btn {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .input-group-text {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-right: none;
+    }
+
+    .input-group .form-control {
+        border-left: none;
+    }
+
+    .input-group .form-control:focus {
+        border-left: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="back-to-home">
+  <a th:href="@{/}" class="btn btn-outline-success">
+    <i class="fas fa-arrow-left me-2"></i>на главную
+  </a>
+</div>
+
+<div class="login-container">
+  <div class="login-header">
+    <h3 class="mb-0"><i class="fas fa-user-circle me-2"></i>вход в аккаунт</h3>
+  </div>
+  <div class="login-body">
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      <span th:text="${message}"></span>
+    </div>
+    <form th:action="@{/login}" method="post">
+      <div class="mb-4">
+        <label for="email" class="form-label">адрес электронной почты</label>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-envelope text-muted"></i>
+                    </span>
+          <input type="text" class="form-control border-start-0" id="email" name="email"
+                 placeholder="example@email.com" required>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="password" class="form-label">пароль</label>
+          <a href="#" class="forgot-password">забыли пароль?</a>
+        </div>
+        <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fas fa-lock text-muted"></i>
+                    </span>
+          <input type="password" class="form-control border-start-0" id="password" name="password"
+                 placeholder="введите пароль" required>
+          <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword()">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">
+            запомнить меня
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-login mb-4">
+        <i class="fas fa-sign-in-alt me-2"></i>войти
+      </button>
+    </form>
+
+    <div class="text-center">
+      <p class="mb-0">ещё нет аккаунта?
+        <a th:href="@{/register}" class="text-success fw-bold text-decoration-none">зарегистрируйтесь</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const icon = document.querySelector('#password ~ button i');
+
+      if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+      } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+      }
+  }
+document.querySelector('form').addEventListener('submit', function(e) {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+          e.preventDefault();
+          showNotification('пожалуйста, заполните все поля', 'error');
+          return;
+      }
+
+      if (email !== 'admin' && email !== 'admin@selderey.ru' && !isValidEmail(email)) {
+        e.preventDefault();
+        showNotification('пожалуйста, введите корректный email', 'error');
+        return;
+      }
+  });
+
+  function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+  }
+
+  function showNotification(message, type) {
+      const existingNotifications = document.querySelectorAll('.custom-notification');
+      existingNotifications.forEach(notification => notification.remove());
+
+      const notification = document.createElement('div');
+      notification.className = `custom-notification alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+      notification.style.cssText = `
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          min-width: 300px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+          border: none;
+          border-radius: 10px;
+      `;
+      notification.innerHTML = `
+          <div class="d-flex align-items-center">
+              <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+              <span>${message}</span>
+          </div>
+      `;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+          if (notification.parentNode) {
+              notification.remove();
+          }
+      }, 5000);
+  }
+</script>
+</body>
+</html>

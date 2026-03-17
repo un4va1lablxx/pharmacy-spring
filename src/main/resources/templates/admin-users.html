@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>управление пользователями - панель управления</title>
+  <link rel="icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+        --primary-color: #44b216;
+        --primary-hover: #389611;
+        --sidebar-bg: #f8f9fa;
+        --sidebar-hover: #e9ecef;
+    }
+
+    .admin-header {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-bottom: 3px solid var(--primary-color);
+    }
+
+    .logo-placeholder {
+        width: 220px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-placeholder img {
+        height: 80px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .admin-sidebar {
+        background: var(--sidebar-bg);
+        color: #333;
+        min-height: calc(100vh - 80px);
+        padding: 0;
+        border-right: 2px solid #e9ecef;
+    }
+
+    .admin-sidebar .nav-link {
+        color: #555;
+        padding: 15px 20px;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .admin-sidebar .nav-link:hover {
+        color: var(--primary-color);
+        background: var(--sidebar-hover);
+        border-left-color: var(--primary-color);
+    }
+
+    .admin-sidebar .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-left-color: var(--primary-hover);
+    }
+
+    .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .sidebar-header {
+        background: white;
+        padding: 20px;
+        border-bottom: 2px solid #e9ecef;
+        text-align: center;
+    }
+
+    .sidebar-header h5 {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-header small {
+        color: #666;
+    }
+
+    .btn-admin {
+        background: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin:hover {
+        background: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-admin-outline {
+        background: white;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin-outline:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-admin-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .btn-danger-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .crud-form {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .admin-title {
+        color: var(--primary-color);
+        font-weight: bold;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+
+    .selderey-text {
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .table th {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .action-buttons {
+        white-space: nowrap;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(68, 178, 22, 0.25);
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .form-control:disabled {
+        background-color: #e9ecef;
+        opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+<header class="admin-header">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin}">
+          <div class="logo-placeholder">
+            <img th:src="@{/pictures/logo.svg}" alt="аптека сельдерей">
+          </div>
+        </a>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <span class="selderey-text">администратор</span>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-admin dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-cog me-2"></i>управление
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>на главную</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>выйти</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
+      <div class="position-sticky">
+        <div class="sidebar-header">
+          <h5>панель управления</h5>
+          <small>аптекой сельдерей</small>
+        </div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/users">
+              <i class="fas fa-users"></i> пользователи
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/products">
+              <i class="fas fa-pills"></i> товары
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/orders">
+              <i class="fas fa-shopping-cart"></i> заказы
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title mb-0">
+          <i class="fas fa-users me-2"></i>управление пользователями
+        </h2>
+        <span class="badge bg-primary fs-6">всего: <span th:text="${users.size()}">0</span></span>
+      </div>
+      <div class="crud-form">
+        <h4 class="selderey-text mb-4">
+          <i class="fas fa-user-plus me-2"></i>добавить нового пользователя
+        </h4>
+        <form th:action="@{/admin/users}" method="post" th:object="${user}">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">логин *</label>
+              <input type="text" class="form-control" th:field="*{userName}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">email *</label>
+              <input type="email" class="form-control" th:field="*{email}" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">фамилия</label>
+              <input type="text" class="form-control" th:field="*{lastName}">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">имя *</label>
+              <input type="text" class="form-control" th:field="*{firstName}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">отчество</label>
+              <input type="text" class="form-control" th:field="*{middleName}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">телефон</label>
+              <input type="tel" class="form-control" th:field="*{phone}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">пароль *</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-admin">
+            <i class="fas fa-save me-2"></i>сохранить пользователя
+          </button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-header bg-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 admin-title">
+              <i class="fas fa-list me-2"></i>список пользователей
+            </h5>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllModal">
+              <i class="fas fa-trash me-2"></i>удалить всех пользователей
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>логин</th>
+                <th>email</th>
+                <th>фио</th>
+                <th>телефон</th>
+                <th>действия</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.userName}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                  <span th:text="${user.lastName + ' ' + user.firstName + ' ' + (user.middleName != null ? user.middleName : '')}"></span>
+                </td>
+                <td th:text="${user.phone}"></td>
+                <td class="action-buttons">
+                  <button class="btn btn-admin btn-admin-sm me-1 edit-user-btn"
+                          th:attr="data-user-id=${user.id}"
+                          th:data-user-name="${user.userName}"
+                          th:data-user-email="${user.email}"
+                          th:data-user-firstname="${user.firstName}"
+                          th:data-user-lastname="${user.lastName}"
+                          th:data-user-middlename="${user.middleName}"
+                          th:data-user-phone="${user.phone}"
+                          th:disabled="${user.userName == 'admin' || user.email == 'admin@selderey.ru'}"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editUserModal">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-danger-sm"
+                            th:disabled="${user.userName == 'admin' || user.email == 'admin@selderey.ru'}"
+                            onclick="return confirm('удалить пользователя?')">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${users.empty}">
+                <td colspan="6" class="text-center text-muted py-4">
+                  <i class="fas fa-users fa-2x mb-3"></i>
+                  <p>пользователи не найдены</p>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="modal fade" id="deleteAllModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">подтверждение удаления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>вы уверены, что хотите удалить всех пользователей?</p>
+        <p class="text-muted small">примечание: администраторы не будут удалены</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <form th:action="@{/admin/users/delete-all}" method="post">
+          <button type="submit" class="btn btn-danger">удалить всех</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editUserModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title selderey-text">редактирование пользователя</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/admin/users/update}" method="post" id="editUserForm">
+          <input type="hidden" name="id" id="editUserId">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">логин *</label>
+              <input type="text" class="form-control" name="userName" id="editUserName" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">email *</label>
+              <input type="email" class="form-control" name="email" id="editUserEmail" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">фамилия</label>
+              <input type="text" class="form-control" name="lastName" id="editUserLastName">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">имя *</label>
+              <input type="text" class="form-control" name="firstName" id="editUserFirstName" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">отчество</label>
+              <input type="text" class="form-control" name="middleName" id="editUserMiddleName">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">телефон</label>
+              <input type="tel" class="form-control" name="phone" id="editUserPhone">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">новый пароль</label>
+              <input type="password" class="form-control" name="password" placeholder="оставьте пустым, чтобы не менять">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <button type="submit" form="editUserForm" class="btn btn-admin">сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const editButtons = document.querySelectorAll('.edit-user-btn');
+      editButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              const userId = this.getAttribute('data-user-id');
+              const userName = this.getAttribute('data-user-name');
+              const userEmail = this.getAttribute('data-user-email');
+              const userFirstName = this.getAttribute('data-user-firstname');
+              const userLastName = this.getAttribute('data-user-lastname');
+              const userMiddleName = this.getAttribute('data-user-middlename');
+              const userPhone = this.getAttribute('data-user-phone');
+              document.getElementById('editUserId').value = userId;
+              document.getElementById('editUserName').value = userName;
+              document.getElementById('editUserEmail').value = userEmail;
+              document.getElementById('editUserFirstName').value = userFirstName;
+              document.getElementById('editUserLastName').value = userLastName || '';
+              document.getElementById('editUserMiddleName').value = userMiddleName || '';
+              document.getElementById('editUserPhone').value = userPhone || '';
+              if (userName === 'admin' || userEmail === 'admin@selderey.ru') {
+                  document.getElementById('editUserName').disabled = true;
+                  document.getElementById('editUserEmail').disabled = true;
+              } else {
+                  document.getElementById('editUserName').disabled = false;
+                  document.getElementById('editUserEmail').disabled = false;
+              }
+          });
+      });
+      const editModal = document.getElementById('editUserModal');
+      editModal.addEventListener('hidden.bs.modal', function () {
+          document.getElementById('editUserForm').reset();
+          document.getElementById('editUserName').disabled = false;
+          document.getElementById('editUserEmail').disabled = false;
+      });
+  });
+</script>
+</body>
+</html>

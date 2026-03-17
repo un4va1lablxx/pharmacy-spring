@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>заказ принят - аптека сельдерей</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .pharmacy-header {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        background: white;
+    }
+
+    .logo-placeholder {
+        width: 220px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-placeholder img {
+        height: 80px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .search-box {
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .search-box .form-control {
+        border-radius: 25px 0 0 25px;
+        border: 2px solid #44b216;
+        border-right: none;
+        padding: 10px 20px;
+    }
+
+    .search-box .btn {
+        border-radius: 0 25px 25px 0;
+        border: 2px solid #44b216;
+        border-left: none;
+        background: white;
+        color: #44b216;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .search-box .btn:hover {
+        background: #f8f9fa;
+        color: #389611;
+    }
+
+    .btn-user-profile {
+        border: 2px solid #44b216 !important;
+        color: #44b216 !important;
+        background: white !important;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-user-profile:hover {
+        background: #f8f9fa !important;
+        border-color: #44b216 !important;
+        color: #389611 !important;
+    }
+
+    .btn-login {
+        border: 2px solid #44b216 !important;
+        color: #44b216 !important;
+        background: white !important;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        background: #f8f9fa !important;
+        border-color: #44b216 !important;
+        color: #389611 !important;
+    }
+
+    .btn-cart {
+        border: 2px solid #44b216 !important;
+        background: #44b216 !important;
+        color: white !important;
+        border-radius: 25%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .btn-cart:hover {
+        background: #389611 !important;
+        border-color: #389611 !important;
+    }
+
+    .success-hero {
+        background: linear-gradient(135deg, #44b216 0%, #5fd62d 100%);
+        color: white;
+        padding: 50px 0 30px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        margin: -30px auto 50px;
+        max-width: 800px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        border: 1px solid #e9ecef;
+        position: relative;
+        z-index: 10;
+    }
+
+    .success-icon {
+        width: 100px;
+        height: 100px;
+        background: #44b216;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        color: white;
+        font-size: 3rem;
+    }
+
+    .order-info {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 30px 0;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .btn-continue {
+        background: #44b216;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 15px 40px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .btn-continue:hover {
+        background: #389611;
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #44b216;
+        border: 2px solid #44b216;
+        border-radius: 12px;
+        padding: 15px 40px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .btn-outline:hover {
+        background: #f8fff8;
+        transform: translateY(-2px);
+    }
+
+    .cart-badge {
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        height: 18px;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .footer {
+        background: #44b216;
+        color: white;
+        padding: 50px 0 20px;
+    }
+
+    .text-lowercase {
+        text-transform: lowercase;
+    }
+
+    .status-badge {
+        background: #44b216;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .delivery-time {
+        background: #e8f5e8;
+        border: 2px solid #44b216;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+        .success-card {
+            margin: -30px 20px 30px;
+            padding: 30px 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2.5rem;
+        }
+    }
+  </style>
+</head>
+<body>
+
+<header class="pharmacy-header sticky-top">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+          <div class="logo-placeholder">
+            <img th:src="@{/pictures/logo.svg}" alt="аптека сельдерей">
+          </div>
+        </a>
+        <div class="search-box mx-auto">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="поиск лекарств и товаров..." id="searchInput">
+            <button class="btn" type="button" id="searchButton">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div th:if="${@userService.isAuthenticated()}" class="me-3">
+            <div class="dropdown">
+              <button class="btn btn-user-profile dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user me-2"></i>
+                <span th:text="${@userService.getCurrentUser().get().firstName}">пользователь</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li th:if="${@userService.isAdmin()}"><a class="dropdown-item" href="/admin"><i class="fas fa-home me-2"></i>панель управления</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="/logout" onclick="saveCartAndLogout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>выйти
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div th:unless="${@userService.isAuthenticated()}">
+            <button class="btn btn-login me-3" id="loginBtn">
+              <i class="fas fa-user me-2"></i>войти
+            </button>
+          </div>
+          <div class="position-relative">
+            <button class="btn btn-cart" id="cartBtn">
+              <i class="fas fa-shopping-cart"></i>
+            </button>
+            <span class="cart-badge" id="cartCount">0</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="success-hero">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-3 text-lowercase">заказ принят!</h1>
+      <p class="lead mb-0 text-lowercase">спасибо за ваш заказ</p>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="success-card">
+        <div class="success-icon">
+          <i class="fas fa-check"></i>
+        </div>
+
+        <h2 class="text-center mb-3 text-lowercase">ваш заказ успешно оформлен</h2>
+        <p class="text-center text-muted mb-4 text-lowercase">
+          мы отправили подтверждение на вашу электронную почту. вы можете отслеживать статус заказа в личном кабинете.
+        </p>
+
+        <div class="text-center mb-4">
+          <span class="status-badge text-lowercase">
+            <i class="fas fa-clock me-2"></i>статус: принят
+          </span>
+        </div>
+
+        <div class="delivery-time">
+          <h5 class="mb-2 text-lowercase">
+            <i class="fas fa-truck me-2"></i>ожидаемое время доставки
+          </h5>
+          <p class="mb-0 fs-5 fw-bold text-lowercase" th:text="${deliveryTime}">сегодня, 18:00 - 20:00</p>
+          <small class="text-muted text-lowercase">курьер свяжется с вами за 30 минут до доставки</small>
+        </div>
+
+        <div class="order-info">
+          <h5 class="mb-4 text-lowercase">
+            <i class="fas fa-receipt me-2"></i>информация о заказе
+          </h5>
+
+          <div class="info-item">
+            <span class="text-lowercase">номер заказа</span>
+            <strong th:text="${order.id}">#123456</strong>
+          </div>
+
+          <div class="info-item">
+            <span class="text-lowercase">дата оформления</span>
+            <strong th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2025 15:30</strong>
+          </div>
+
+          <div class="info-item">
+            <span class="text-lowercase">способ оплаты</span>
+            <strong th:text="${order.paymentMethod.title}">онлайн</strong>
+          </div>
+
+          <div class="info-item">
+            <span class="text-lowercase">адрес доставки</span>
+            <strong th:text="${order.shippingAddress}">ул. примерная, д. 1, кв. 1</strong>
+          </div>
+
+          <div class="info-item">
+            <span class="text-lowercase">общая сумма</span>
+            <strong class="text-success fs-5" th:text="'₽' + ${#numbers.formatDecimal(order.total, 1, 2)}">₽1,500.00</strong>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h5 class="mb-3 text-lowercase">
+            <i class="fas fa-shopping-bag me-2"></i>состав заказа
+          </h5>
+
+          <div th:each="item : ${order.orderItems}" class="info-item">
+            <div>
+              <span class="fw-bold text-lowercase" th:text="${item.product.name}">нурофен экспресс</span>
+              <small class="text-muted d-block text-lowercase" th:text="${item.quantity + ' × ₽' + #numbers.formatDecimal(item.product.price, 1, 2)}">2 × ₽750.00</small>
+            </div>
+            <strong th:text="'₽' + ${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">₽1,500.00</strong>
+          </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <a th:href="@{/}" class="btn btn-continue text-lowercase">
+            <i class="fas fa-home me-2"></i>на главную
+          </a>
+          <a th:href="@{/products}" class="btn btn-outline text-lowercase">
+            <i class="fas fa-shopping-bag me-2"></i>продолжить покупки
+          </a>
+        </div>
+
+        <div class="text-center mt-4">
+          <small class="text-muted text-lowercase">
+            <i class="fas fa-phone me-1"></i>если у вас есть вопросы, звоните: 8-800-555-35-35
+          </small>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <h5 class="text-lowercase">аптека сельдерей</h5>
+        <p class="text-lowercase">мы заботимся о вашем здоровье с 2010 года. широкий ассортимент, качественный сервис и доступные цены.</p>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">информация</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">о компании</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">контакты</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">вакансии</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">помощь</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">доставка</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">оплата</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">faq</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">правовая информация</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">политика конфиденциальности</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">условия использования</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">лицензии</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">контакты</h6>
+        <ul class="list-unstyled">
+          <li><i class="fas fa-phone me-2"></i> 8-800-555-35-35</li>
+          <li><i class="fas fa-envelope me-2"></i> info@selderey.ru</li>
+          <li><i class="fas fa-map-marker-alt me-2"></i> г. москва</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="text-center">
+      <p class="text-lowercase">&copy; 2025 аптека сельдерей. все права защищены.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById('searchButton').addEventListener('click', function() {
+      const query = document.getElementById('searchInput').value;
+      if (query.trim()) {
+          window.location.href = '/products?search=' + encodeURIComponent(query);
+      }
+  });
+
+  document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+          document.getElementById('searchButton').click();
+      }
+  });
+
+  document.getElementById('cartBtn').addEventListener('click', function() {
+      window.location.href = '/cart';
+  });
+
+  document.getElementById('loginBtn').addEventListener('click', function() {
+      window.location.href = '/login';
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+          const successIcon = document.querySelector('.success-icon');
+          successIcon.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+              successIcon.style.transform = 'scale(1)';
+          }, 300);
+      }, 1000);
+      document.getElementById('cartCount').textContent = '0';
+  });
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartBadge();
+});
+
+function updateCartBadge() {
+    fetch('/cart/count')
+        .then(response => response.text())
+        .then(count => {
+            const cartBadge = document.getElementById('cartCount');
+            if (cartBadge) {
+                cartBadge.textContent = count;
+                cartBadge.style.display = count === '0' ? 'none' : 'flex';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+function saveCartAndLogout() {
+    showNotification('сохраняем корзину...', 'info');
+    setTimeout(() => {
+        window.location.href = '/logout-with-save';
+    }, 1000);
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+    `;
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+</script>
+</body>
+</html>

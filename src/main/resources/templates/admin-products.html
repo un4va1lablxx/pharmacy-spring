@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>управление товарами - панель управления</title>
+  <link rel="icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+        --primary-color: #44b216;
+        --primary-hover: #389611;
+        --sidebar-bg: #f8f9fa;
+        --sidebar-hover: #e9ecef;
+    }
+
+    .admin-header {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-bottom: 3px solid var(--primary-color);
+    }
+
+    .logo-placeholder {
+        width: 220px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-placeholder img {
+        height: 80px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .admin-sidebar {
+        background: var(--sidebar-bg);
+        color: #333;
+        min-height: calc(100vh - 80px);
+        padding: 0;
+        border-right: 2px solid #e9ecef;
+    }
+
+    .admin-sidebar .nav-link {
+        color: #555;
+        padding: 15px 20px;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .admin-sidebar .nav-link:hover {
+        color: var(--primary-color);
+        background: var(--sidebar-hover);
+        border-left-color: var(--primary-color);
+    }
+
+    .admin-sidebar .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-left-color: var(--primary-hover);
+    }
+
+    .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .sidebar-header {
+        background: white;
+        padding: 20px;
+        border-bottom: 2px solid #e9ecef;
+        text-align: center;
+    }
+
+    .sidebar-header h5 {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-header small {
+        color: #666;
+    }
+
+    .btn-admin {
+        background: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin:hover {
+        background: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-admin-outline {
+        background: white;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin-outline:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-admin-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .btn-danger-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .crud-form {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .admin-title {
+        color: var(--primary-color);
+        font-weight: bold;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+
+    .selderey-text {
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .table th {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .action-buttons {
+        white-space: nowrap;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(68, 178, 22, 0.25);
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .form-control:disabled {
+        background-color: #e9ecef;
+        opacity: 0.7;
+    }
+
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .bg-green {
+    background: var(--primary-color);
+    }
+
+    .text-success { color: var(--primary-color); }
+    .text-warning { color: #ffc107 !important; }
+    .text-danger { color: #dc3545 !important; }
+  </style>
+</head>
+<body>
+<header class="admin-header">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin}">
+          <div class="logo-placeholder">
+            <img th:src="@{/pictures/logo.svg}" alt="аптека сельдерей">
+          </div>
+        </a>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <span class="selderey-text">администратор</span>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-admin dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-cog me-2"></i>управление
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>на главную</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>выйти</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
+      <div class="position-sticky">
+        <div class="sidebar-header">
+          <h5>панель управления</h5>
+          <small>аптекой сельдерей</small>
+        </div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users">
+              <i class="fas fa-users"></i> пользователи
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/products">
+              <i class="fas fa-pills"></i> товары
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/orders">
+              <i class="fas fa-shopping-cart"></i> заказы
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title mb-0">
+          <i class="fas fa-pills me-2"></i>управление товарами
+        </h2>
+        <span class="badge bg-primary fs-6">всего: <span th:text="${products.size()}">0</span></span>
+      </div>
+      <div class="crud-form">
+        <h4 class="selderey-text mb-4">
+          <i class="fas fa-plus-circle me-2"></i>добавить новый товар
+        </h4>
+        <form th:action="@{/admin/products}" method="post" th:object="${product}">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">название товара *</label>
+              <input type="text" class="form-control" th:field="*{name}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">категория *</label>
+              <input type="text" class="form-control" th:field="*{category}" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">цена *</label>
+              <input type="number" class="form-control" th:field="*{price}" step="0.01" min="0" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">количество на складе *</label>
+              <input type="number" class="form-control" th:field="*{stockQuantity}" min="0" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">рецептурный препарат</label>
+              <select class="form-control" th:field="*{prescriptionRequired}">
+                <option value="false">нет</option>
+                <option value="true">да</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label class="form-label">описание</label>
+              <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">производитель</label>
+              <input type="text" class="form-control" th:field="*{manufacturer}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">ссылка на изображение</label>
+              <input type="text" class="form-control" th:field="*{imageUrl}" placeholder="https://example.com/image.jpg">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-admin">
+            <i class="fas fa-save me-2"></i>сохранить товар
+          </button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="card-header bg-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 admin-title">
+              <i class="fas fa-list me-2"></i>список товаров
+            </h5>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllModal">
+              <i class="fas fa-trash me-2"></i>удалить все товары
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>изображение</th>
+                <th>название</th>
+                <th>категория</th>
+                <th>цена</th>
+                <th>на складе</th>
+                <th>рецепт</th>
+                <th>действия</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="product : ${products}">
+                <td th:text="${product.id}">1</td>
+                <td>
+                  <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" class="product-image" alt="изображение товара">
+                  <div th:unless="${product.imageUrl}" class="product-image bg-light d-flex align-items-center justify-content-center">
+                    <i class="fas fa-pills text-muted"></i>
+                  </div>
+                </td>
+                <td>
+                  <strong th:text="${product.name}">название товара</strong>
+                  <small class="d-block text-muted" th:text="${product.manufacturer} ?: 'без производителя'">Производитель</small>
+                </td>
+                <td th:text="${product.category}">категория</td>
+                <td>
+                  <strong th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' ₽'">0.00 ₽</strong>
+                </td>
+                <td>
+                  <span th:class="${product.stockQuantity > 10} ? 'text-success' :
+                                 (${product.stockQuantity > 0} ? 'text-warning' : 'text-danger')"
+                        th:text="${product.stockQuantity} + ' шт.'">
+                    0 шт.
+                  </span>
+                </td>
+                <td>
+                  <span th:if="${product.prescriptionRequired}" class="badge bg-danger">рецепт</span>
+                  <span th:unless="${product.prescriptionRequired}" class="badge bg-green">без рецепта</span>
+                </td>
+                <td class="action-buttons">
+                  <button class="btn btn-admin btn-admin-sm me-1 edit-product-btn"
+                          th:attr="data-product-id=${product.id}"
+                          th:data-product-name="${product.name}"
+                          th:data-product-category="${product.category}"
+                          th:data-product-price="${product.price}"
+                          th:data-product-stock="${product.stockQuantity}"
+                          th:data-product-prescription="${product.prescriptionRequired}"
+                          th:data-product-description="${product.description}"
+                          th:data-product-manufacturer="${product.manufacturer}"
+                          th:data-product-image="${product.imageUrl}"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editProductModal">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form th:action="@{/admin/products/{id}/delete(id=${product.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-danger-sm"
+                            onclick="return confirm('удалить товар?')">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${products.empty}">
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="fas fa-pills fa-2x mb-3"></i>
+                  <p>товары не найдены</p>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="modal fade" id="deleteAllModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">подтверждение удаления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>вы уверены, что хотите удалить все товары?</p>
+        <p class="text-muted small">это действие нельзя отменить</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <form th:action="@{/admin/products/delete-all}" method="post">
+          <button type="submit" class="btn btn-danger">удалить все</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title selderey-text">редактирование товара</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/admin/products/update}" method="post" id="editProductForm">
+          <input type="hidden" name="id" id="editProductId">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">название товара *</label>
+              <input type="text" class="form-control" name="name" id="editProductName" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">категория *</label>
+              <input type="text" class="form-control" name="category" id="editProductCategory" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">цена *</label>
+              <input type="number" class="form-control" name="price" id="editProductPrice" step="0.01" min="0" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">количество на складе *</label>
+              <input type="number" class="form-control" name="stockQuantity" id="editProductStock" min="0" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">рецептурный препарат</label>
+              <select class="form-control" name="prescriptionRequired" id="editProductPrescription">
+                <option value="false">нет</option>
+                <option value="true">да</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label class="form-label">описание</label>
+              <textarea class="form-control" name="description" id="editProductDescription" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">производитель</label>
+              <input type="text" class="form-control" name="manufacturer" id="editProductManufacturer">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">ссылка на изображение</label>
+              <input type="text" class="form-control" name="imageUrl" id="editProductImageUrl">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <button type="submit" form="editProductForm" class="btn btn-admin">сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const editButtons = document.querySelectorAll('.edit-product-btn');
+
+      editButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              const productId = this.getAttribute('data-product-id');
+              const productName = this.getAttribute('data-product-name');
+              const productCategory = this.getAttribute('data-product-category');
+              const productPrice = this.getAttribute('data-product-price');
+              const productStock = this.getAttribute('data-product-stock');
+              const productPrescription = this.getAttribute('data-product-prescription');
+              const productDescription = this.getAttribute('data-product-description');
+              const productManufacturer = this.getAttribute('data-product-manufacturer');
+              const productImageUrl = this.getAttribute('data-product-image');
+              document.getElementById('editProductId').value = productId;
+              document.getElementById('editProductName').value = productName;
+              document.getElementById('editProductCategory').value = productCategory;
+              document.getElementById('editProductPrice').value = productPrice;
+              document.getElementById('editProductStock').value = productStock;
+              document.getElementById('editProductPrescription').value = productPrescription;
+              document.getElementById('editProductDescription').value = productDescription || '';
+              document.getElementById('editProductManufacturer').value = productManufacturer || '';
+              document.getElementById('editProductImageUrl').value = productImageUrl || '';
+          });
+      });
+      const editModal = document.getElementById('editProductModal');
+      editModal.addEventListener('hidden.bs.modal', function () {
+          document.getElementById('editProductForm').reset();
+      });
+  });
+</script>
+</body>
+</html>
