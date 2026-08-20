@@ -1,0 +1,35 @@
+# Сборка Maven и Gradle
+**/target/
+**/build/
+**/out/
+
+# Логи и временные файлы отчетов
+*.log
+*.xlsx
+*.xls
+*.csv
+
+# Файлы настроек Maven / Gradle wrapper
+.mvn/
+mvnw
+mvnw.cmd
+.gradle/
+gradlew
+gradlew.bat
+
+# Документация
+HELP.md
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+/out/
+
+# VS Code
+.vscode/
+
+# Специфичные настройки операционных систем
+.DS_Store
+Thumbs.db

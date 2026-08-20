@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>детали заказа</title>
+</head>
+<body>
+<div th:fragment="orderDetails" th:if="${order}">
+  <div class="order-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="selderey-text mb-0">
+        <i class="fas fa-receipt me-2"></i>заказ #<span th:text="${order.id.toString().substring(0, 8)}"></span>
+      </h4>
+      <span th:class="'status-badge status-' + ${order.shippingStatus.name().toLowerCase()}"
+            th:text="${order.shippingStatus.title}">
+                </span>
+    </div>
+    <p class="text-muted mb-0" th:text="'Создан: ' + ${#temporals.format(order.createdAt, 'dd.MM.yyyy в HH:mm')}"></p>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 modal-card">
+        <div class="card-header">
+          <h6 class="mb-0 selderey-text">
+            <i class="fas fa-user me-2"></i>информация о клиенте
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="user-info">
+            <div class="d-flex align-items-center mb-3">
+              <div class="user-avatar bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                <i class="fas fa-user text-white"></i>
+              </div>
+              <div>
+                <strong th:text="${order.user.userName}"></strong>
+                <div class="text-muted small" th:text="${order.user.email}"></div>
+              </div>
+            </div>
+            <div class="user-details">
+              <p class="mb-1"><i class="fas fa-phone me-2 text-muted"></i>
+                <span th:text="${order.user.phone ?: 'не указан'}"></span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="card h-100 modal-card">
+        <div class="card-header">
+          <h6 class="mb-0 selderey-text">
+            <i class="fas fa-info-circle me-2"></i>детали заказа
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="order-details">
+            <div class="row">
+              <div class="col-6">
+                <p class="mb-2"><strong>способ оплаты:</strong></p>
+                <p class="mb-2"><strong>адрес доставки:</strong></p>
+              </div>
+              <div class="col-6">
+                <p class="mb-2" th:text="${order.paymentMethod.title}"></p>
+                <p class="mb-0" th:text="${order.shippingAddress ?: 'не указан'}"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card modal-card mb-4">
+    <div class="card-header">
+      <h6 class="mb-0 selderey-text">
+        <i class="fas fa-shopping-basket me-2"></i>товары в заказе
+        <span class="badge bg-primary ms-2" th:text="${order.orderItems.size()}"></span>
+      </h6>
+    </div>
+    <div class="card-body p-0">
+      <div class="order-items-list">
+        <div class="order-item" th:each="orderItem : ${order.orderItems}"
+             th:style="'border-left-color: ' + (${orderItem.product.prescriptionRequired} ? '#dc3545' : '#44b216')">
+          <div class="row align-items-center">
+            <div class="col-1">
+              <img th:if="${orderItem.product?.imageUrl}"
+                   th:src="${orderItem.product.imageUrl}"
+                   class="product-image-small"
+                   alt="товар">
+              <div th:unless="${orderItem.product?.imageUrl}"
+                   class="product-image-small bg-light rounded d-flex align-items-center justify-content-center">
+                <i class="fas fa-pills text-muted"></i>
+              </div>
+            </div>
+            <div class="col-5">
+              <strong class="d-block" th:text="${orderItem.product?.name ?: 'Товар не найден'}"></strong>
+              <small class="text-muted" th:if="${orderItem.product}" th:text="${orderItem.product.category}"></small>
+              <div th:if="${orderItem.product?.prescriptionRequired}" class="mt-1">
+                <span class="badge bg-danger">рецептурный</span>
+              </div>
+            </div>
+            <div class="col-2 text-center">
+              <span class="order-item-quantity fw-bold" th:text="${orderItem.quantity} + ' шт.'"></span>
+            </div>
+            <div class="col-2 text-end">
+                                <span class="text-muted" th:if="${orderItem.product}"
+                                      th:text="${#numbers.formatDecimal(orderItem.product.price, 1, 2)} + ' ₽'"></span>
+              <span class="text-danger" th:unless="${orderItem.product}">недоступно</span>
+            </div>
+            <div class="col-2 text-end">
+              <strong th:if="${orderItem.product}"
+                      th:text="${#numbers.formatDecimal(orderItem.product.price * orderItem.quantity, 1, 2)} + ' ₽'"></strong>
+            </div>
+          </div>
+        </div>
+        <div th:if="${order.orderItems.empty}" class="text-center text-muted py-5">
+          <i class="fas fa-shopping-basket fa-3x mb-3"></i>
+          <p class="mb-0">товары не найдены</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card modal-card">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h6 class="mb-2">общая информация:</h6>
+          <p class="mb-1"><strong>количество товаров:</strong> <span th:text="${order.orderItems.size()}"></span></p>
+          <p class="mb-0"><strong>позиций в заказе:</strong> <span th:text="${order.orderItems.size()}"></span></p>
+        </div>
+        <div class="col-md-6 text-end">
+          <div class="total-summary">
+            <h4 class="selderey-text mb-0">
+              Итого: <span th:text="${#numbers.formatDecimal(order.total, 1, 2)}"></span> ₽
+            </h4>
+            <small class="text-muted">включая все налоги и сборы</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="error" th:if="${error}">
+  <div class="alert alert-danger border-0">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+      <div>
+        <h6 class="alert-heading mb-1">ошибка загрузки</h6>
+        <p class="mb-0" th:text="${error}"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:fragment="notFound" th:unless="${order}">
+  <div class="alert alert-warning border-0">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-search fa-2x me-3"></i>
+      <div>
+        <h6 class="alert-heading mb-1">заказ не найден</h6>
+        <p class="mb-0">запрашиваемый заказ не существует или был удален</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

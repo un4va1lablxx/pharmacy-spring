@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>каталог товаров - аптека сельдерей</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .pharmacy-header {
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        background: white;
+    }
+
+    .logo-placeholder {
+        width: 220px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-placeholder img {
+        height: 80px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .search-box {
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .search-box .form-control {
+        border-radius: 25px 0 0 25px;
+        border: 2px solid #44b216;
+        border-right: none;
+        padding: 10px 20px;
+    }
+
+    .search-box .btn {
+        border-radius: 0 25px 25px 0;
+        border: 2px solid #44b216;
+        border-left: none;
+        background: white;
+        color: #44b216;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+    }
+
+    .search-box .btn:hover {
+        background: #f8f9fa;
+        color: #389611;
+    }
+
+    .btn-user-profile {
+        border: 2px solid #44b216 !important;
+        color: #44b216 !important;
+        background: white !important;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-user-profile:hover {
+        background: #f8f9fa !important;
+        border-color: #44b216 !important;
+        color: #389611 !important;
+    }
+
+    .btn-login {
+        border: 2px solid #44b216 !important;
+        color: #44b216 !important;
+        background: white !important;
+        border-radius: 25px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        background: #f8f9fa !important;
+        border-color: #44b216 !important;
+        color: #389611 !important;
+    }
+
+    .btn-cart {
+        border: 2px solid #44b216 !important;
+        background: white !important;
+        color: #44b216 !important;
+        border-radius: 25%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cart:hover {
+        background: #f8f9fa !important;
+        color: #389611 !important;
+    }
+
+    .catalog-header {
+        background: linear-gradient(135deg, #44b216 0%, #5fd62d 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(68, 178, 22, 0.2);
+    }
+
+    .product-image {
+        height: 250px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .category-badge {
+        background: #44b216;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .prescription-badge {
+        background: #e74c3c;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+    }
+
+    .filter-sidebar {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+    }
+
+    .filter-title {
+        color: #44b216;
+        font-weight: bold;
+        border-bottom: 2px solid #44b216;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .filter-category {
+        color: #333;
+        text-decoration: none;
+        padding: 8px 0;
+        display: block;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin: 2px 0;
+    }
+
+    .filter-category:hover {
+        color: #44b216;
+        background: #e8f5e8;
+    }
+
+    .filter-category.active {
+        background: #44b216;
+        color: white;
+    }
+
+    .results-count {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .cart-badge {
+        background: #e74c3c;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+    }
+
+    .footer {
+        background: #44b216;
+        color: white;
+        padding: 50px 0 20px;
+    }
+
+    .stock-badge {
+        background: #28a745;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+    }
+
+    .out-of-stock {
+        opacity: 0.7;
+    }
+
+    .btn-add-to-cart-catalog {
+        background: #44b216;
+        border: 2px solid #44b216;
+        color: white;
+        border-radius: 20px;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+        width: 100%;
+    }
+
+    .btn-add-to-cart-catalog:hover:not(:disabled) {
+        background: white;
+        color: #44b216;
+        border-color: #44b216;
+        transform: translateY(-1px);
+    }
+
+    .btn-add-to-cart-catalog:disabled {
+        background: #6c757d;
+        border-color: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .price-accent {
+        color: #44b216 !important;
+        font-weight: 600;
+    }
+
+    .text-lowercase {
+        text-transform: lowercase;
+    }
+
+    .btn-sort {
+        background: #44b216;
+        border: 2px solid #44b216;
+        color: white;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sort:hover {
+        background: white;
+        color: #44b216;
+        border-color: #44b216;
+    }
+
+    .category-section {
+        margin-bottom: 60px;
+        scroll-margin-top: 100px;
+    }
+
+    .category-header {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+        border-left: 4px solid #44b216;
+        padding: 20px 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .category-title {
+        color: #44b216;
+        font-weight: bold;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .category-count {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .filter-active {
+        background: #44b216 !important;
+        color: white !important;
+    }
+
+    .clear-filters {
+        color: #44b216;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .clear-filters:hover {
+        text-decoration: underline;
+    }
+
+    .scroll-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #44b216;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(68, 178, 22, 0.3);
+        z-index: 1000;
+    }
+
+    .scroll-to-top:hover {
+        background: #389611;
+        transform: translateY(-2px);
+    }
+
+    .btn-back-to-catalog {
+        background: #44b216;
+        border: 2px solid #44b216;
+        color: white;
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back-to-catalog:hover {
+        background: white;
+        color: #44b216;
+        border-color: #44b216;
+        transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+<header class="pharmacy-header sticky-top">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/}">
+          <div class="logo-placeholder">
+            <img th:src="@{/pictures/logo.svg}" alt="аптека сельдерей">
+          </div>
+        </a>
+        <div class="search-box mx-auto">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="поиск лекарств и товаров..."
+                   th:value="${searchQuery}" id="searchInput">
+            <button class="btn" type="button" id="searchButton">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div th:if="${@userService.isAuthenticated()}" class="me-3">
+            <div class="dropdown">
+              <button class="btn btn-user-profile dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user me-2"></i>
+                <span th:text="${@userService.getCurrentUser().get().firstName}">пользователь</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li th:if="${@userService.isAdmin()}"><a class="dropdown-item" href="/admin"><i class="fas fa-home me-2"></i>панель управления</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item" href="/logout" onclick="saveCartAndLogout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>выйти
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div th:unless="${@userService.isAuthenticated()}">
+            <button class="btn btn-login me-3" id="loginBtn">
+              <i class="fas fa-user me-2"></i>войти
+            </button>
+          </div>
+          <div class="position-relative">
+            <button class="btn btn-cart" id="cartBtn">
+              <i class="fas fa-shopping-cart"></i>
+            </button>
+            <span class="cart-badge" id="cartCount">0</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="catalog-header">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-4 text-lowercase">каталог товаров</h1>
+      <p class="lead mb-4 text-lowercase">широкий ассортимент лекарств и товаров для здоровья</p>
+    </div>
+  </section>
+
+  <section class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 mb-4">
+          <div class="filter-sidebar">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="filter-title text-lowercase mb-0">категории</h5>
+              <a th:href="@{/products}" class="clear-filters text-lowercase" th:if="${currentCategory != null || inStock != null || noPrescription != null}">
+                <i class="fas fa-times me-1"></i>очистить
+              </a>
+            </div>
+            <a th:href="@{/products}"
+               class="filter-category text-lowercase"
+               th:classappend="${currentCategory == null} ? 'active' : ''">
+              <i class="fas fa-boxes me-2"></i>все товары
+            </a>
+            <a th:each="cat : ${categories}"
+               th:href="@{/products(category=${cat})}"
+               class="filter-category text-lowercase"
+               th:classappend="${currentCategory == cat} ? 'active' : ''">
+              <i class="fas fa-pills me-2"></i>
+              <span th:text="${cat}">категория</span>
+            </a>
+            <h5 class="filter-title mt-4 text-lowercase">фильтры</h5>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="inStock"
+                     th:checked="${inStock != null && inStock}"
+                     onchange="applyFilters()">
+              <label class="form-check-label text-lowercase" for="inStock">
+                <i class="fas fa-check-circle me-2 text-success"></i>в наличии
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="noPrescription"
+                     th:checked="${noPrescription != null && noPrescription}"
+                     onchange="applyFilters()">
+              <label class="form-check-label text-lowercase" for="noPrescription">
+                <i class="fas fa-prescription-bottle me-2 text-primary"></i>без рецепта
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-9">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="results-count text-lowercase">
+              найдено товаров: <strong th:text="${products.size()}">0</strong>
+              <span th:if="${searchQuery != null}"> по запросу "<strong th:text="${searchQuery}"></strong>"</span>
+              <span th:if="${currentCategory != null}"> в категории "<strong th:text="${currentCategory}"></strong>"</span>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-sort dropdown-toggle text-lowercase" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-sort me-2"></i>
+                <span th:switch="${currentSort}">
+                  <span th:case="'price_asc'">по цене (возрастание)</span>
+                  <span th:case="'price_desc'">по цене (убывание)</span>
+                  <span th:case="'name'">по названию</span>
+                  <span th:case="'stock'">по наличию</span>
+                  <span th:case="*">сортировка</span>
+                </span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item text-lowercase"
+                       th:href="@{/products(category=${currentCategory}, search=${searchQuery}, inStock=${inStock}, noPrescription=${noPrescription}, sort='price_asc')}">
+                  по цене (возрастание)
+                </a></li>
+                <li><a class="dropdown-item text-lowercase"
+                       th:href="@{/products(category=${currentCategory}, search=${searchQuery}, inStock=${inStock}, noPrescription=${noPrescription}, sort='price_desc')}">
+                  по цене (убывание)
+                </a></li>
+                <li><a class="dropdown-item text-lowercase"
+                       th:href="@{/products(category=${currentCategory}, search=${searchQuery}, inStock=${inStock}, noPrescription=${noPrescription}, sort='name')}">
+                  по названию
+                </a></li>
+                <li><a class="dropdown-item text-lowercase"
+                       th:href="@{/products(category=${currentCategory}, search=${searchQuery}, inStock=${inStock}, noPrescription=${noPrescription}, sort='stock')}">
+                  по наличию
+                </a></li>
+              </ul>
+            </div>
+          </div>
+          <div th:if="${!products.empty}">
+            <div th:if="${currentCategory != null}" class="category-section">
+              <div class="category-header">
+                <h3 class="category-title text-lowercase" th:text="${currentCategory}">категория</h3>
+                <span class="category-count text-lowercase" th:text="'(' + ${products.size()} + ' товаров)'"></span>
+              </div>
+              <div class="row">
+                <div class="col-xl-4 col-md-6 mb-4" th:each="product : ${products}">
+                  <div class="card product-card h-100" th:classappend="${product.stockQuantity == 0} ? 'out-of-stock'">
+                    <img th:src="${product.imageUrl}" class="card-img-top product-image" th:alt="${product.name}">
+                    <div class="card-body d-flex flex-column">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="category-badge text-lowercase" th:text="${product.category}">категория</span>
+                        <span th:if="${product.prescriptionRequired}" class="prescription-badge text-lowercase">
+                          <i class="fas fa-prescription me-1"></i>рецепт
+                        </span>
+                      </div>
+                      <h5 class="card-title text-lowercase" th:text="${product.name}">название товара</h5>
+                      <p class="card-text flex-grow-1 text-lowercase" th:text="${product.description}">описание товара</p>
+                      <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                          <span class="h4 price-accent mb-0" th:text="'₽' + ${#numbers.formatDecimal(product.price, 1, 2)}">₽0.00</span>
+                          <span th:if="${product.stockQuantity > 0}" class="stock-badge text-lowercase">
+                            в наличии: <span th:text="${product.stockQuantity}">0</span>
+                          </span>
+                          <span th:if="${product.stockQuantity == 0}" class="text-danger small text-lowercase">
+                            нет в наличии
+                          </span>
+                        </div>
+                        <div class="d-grid">
+                          <form th:action="@{/cart/add}" method="post" class="d-inline">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn btn-add-to-cart-catalog w-100"
+                                    th:disabled="${product.stockQuantity == 0}">
+                              <i class="fas fa-cart-plus me-2"></i>
+                              <span th:if="${product.stockQuantity == 0}">нет в наличии</span>
+                              <span th:unless="${product.stockQuantity == 0}">в корзину</span>
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div th:if="${currentCategory == null}">
+              <div id="all-products" class="category-section">
+                <div class="category-header">
+                  <h3 class="category-title text-lowercase">все товары</h3>
+                  <span class="category-count text-lowercase" th:text="'(' + ${products.size()} + ' товаров)'"></span>
+                </div>
+                <div class="row">
+                  <div class="col-xl-4 col-md-6 mb-4" th:each="product : ${products}">
+                    <div class="card product-card h-100" th:classappend="${product.stockQuantity == 0} ? 'out-of-stock'">
+                      <img th:src="${product.imageUrl}" class="card-img-top product-image" th:alt="${product.name}">
+                      <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                          <span class="category-badge text-lowercase" th:text="${product.category}">категория</span>
+                          <span th:if="${product.prescriptionRequired}" class="prescription-badge text-lowercase">
+                            <i class="fas fa-prescription me-1"></i>рецепт
+                          </span>
+                        </div>
+                        <h5 class="card-title text-lowercase" th:text="${product.name}">название товара</h5>
+                        <p class="card-text flex-grow-1 text-lowercase" th:text="${product.description}">описание товара</p>
+                        <div class="mt-auto">
+                          <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="h4 price-accent mb-0" th:text="'₽' + ${#numbers.formatDecimal(product.price, 1, 2)}">₽0.00</span>
+                            <span th:if="${product.stockQuantity > 0}" class="stock-badge text-lowercase">
+                              в наличии: <span th:text="${product.stockQuantity}">0</span>
+                            </span>
+                            <span th:if="${product.stockQuantity == 0}" class="text-danger small text-lowercase">
+                              нет в наличии
+                            </span>
+                          </div>
+                          <div class="d-grid">
+                            <form th:action="@{/cart/add}" method="post" class="d-inline">
+                              <input type="hidden" name="productId" th:value="${product.id}">
+                              <input type="hidden" name="quantity" value="1">
+                              <button type="submit" class="btn btn-add-to-cart-catalog w-100"
+                                      th:disabled="${product.stockQuantity == 0}">
+                                <i class="fas fa-cart-plus me-2"></i>
+                                <span th:if="${product.stockQuantity == 0}">нет в наличии</span>
+                                <span th:unless="${product.stockQuantity == 0}">в корзину</span>
+                              </button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div th:if="${products.empty}" class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted text-lowercase">товары не найдены</h4>
+            <p class="text-muted text-lowercase" th:if="${searchQuery != null}">
+              попробуйте изменить поисковый запрос "<strong th:text="${searchQuery}"></strong>"
+            </p>
+            <p class="text-muted text-lowercase" th:if="${currentCategory != null}">
+              в категории "<strong th:text="${currentCategory}"></strong>" пока нет товаров
+            </p>
+            <p class="text-muted text-lowercase" th:unless="${searchQuery != null || currentCategory != null}">
+              товары временно отсутствуют
+            </p>
+            <a th:href="@{/products}" class="btn btn-back-to-catalog mt-3 text-lowercase">
+              <i class="fas fa-undo me-2"></i>вернуться к каталогу
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<button class="scroll-to-top" onclick="scrollToTop()" style="display: none;">
+  <i class="fas fa-chevron-up"></i>
+</button>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <h5 class="text-lowercase">аптека сельдерей</h5>
+        <p class="text-lowercase">мы заботимся о вашем здоровье с 2010 года. широкий ассортимент, качественный сервис и доступные цены.</p>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">информация</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">о компании</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">контакты</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">вакансии</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">помощь</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">доставка</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">оплата</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">faq</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">правовая информация</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">политика конфиденциальности</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">условия использования</a></li>
+          <li><a href="#" class="text-light text-decoration-none text-lowercase">лицензии</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4">
+        <h6 class="text-lowercase">контакты</h6>
+        <ul class="list-unstyled">
+          <li><i class="fas fa-phone me-2"></i> 8-800-555-35-35</li>
+          <li><i class="fas fa-envelope me-2"></i> info@selderey.ru</li>
+          <li><i class="fas fa-map-marker-alt me-2"></i> г. москва</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="text-center">
+      <p class="text-lowercase">&copy; 2025 аптека сельдерей. все права защищены.</p>
+    </div>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  window.addEventListener('scroll', function() {
+      const scrollButton = document.querySelector('.scroll-to-top');
+      if (window.pageYOffset > 300) {
+          scrollButton.style.display = 'flex';
+      } else {
+          scrollButton.style.display = 'none';
+      }
+  });
+
+  function scrollToTop() {
+      window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+      });
+  }
+
+  function applyFilters() {
+      const inStock = document.getElementById('inStock').checked;
+      const noPrescription = document.getElementById('noPrescription').checked;
+      const currentCategory = '[[${currentCategory}]]';
+      const searchQuery = '[[${searchQuery}]]';
+
+      let url = '/products?';
+      if (currentCategory && currentCategory !== 'null') {
+          url += 'category=' + encodeURIComponent(currentCategory) + '&';
+      }
+      if (searchQuery && searchQuery !== 'null') {
+          url += 'search=' + encodeURIComponent(searchQuery) + '&';
+      }
+      if (inStock) {
+          url += 'inStock=true&';
+      }
+      if (noPrescription) {
+          url += 'noPrescription=true&';
+      }
+
+      if (url.endsWith('&')) {
+          url = url.slice(0, -1);
+      }
+
+      window.location.href = url;
+  }
+
+  document.getElementById('searchButton').addEventListener('click', function() {
+      const query = document.getElementById('searchInput').value;
+      if (query.trim()) {
+          window.location.href = '/products?search=' + encodeURIComponent(query);
+      }
+  });
+
+  document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+          document.getElementById('searchButton').click();
+      }
+  });
+
+  document.getElementById('cartBtn').addEventListener('click', function() {
+      window.location.href = '/cart';
+  });
+
+  document.getElementById('loginBtn').addEventListener('click', function() {
+      window.location.href = '/login';
+  });
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartBadge();
+});
+
+function updateCartBadge() {
+    fetch('/cart/count')
+        .then(response => response.text())
+        .then(count => {
+            const cartBadge = document.getElementById('cartCount');
+            if (cartBadge) {
+                cartBadge.textContent = count;
+                cartBadge.style.display = count === '0' ? 'none' : 'flex';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+function saveCartAndLogout() {
+    showNotification('сохраняем корзину...', 'info');
+    setTimeout(() => {
+        window.location.href = '/logout-with-save';
+    }, 1000);
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+    `;
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+</script>
+</body>
+</html>

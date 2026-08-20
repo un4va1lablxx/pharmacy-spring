@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>управление заказами - панель управления</title>
+  <link rel="icon" th:href="@{/pictures/favicon.svg}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+        --primary-color: #44b216;
+        --primary-hover: #389611;
+        --sidebar-bg: #f8f9fa;
+        --sidebar-hover: #e9ecef;
+    }
+
+    .admin-header {
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-bottom: 3px solid var(--primary-color);
+    }
+
+    .logo-placeholder {
+        width: 220px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-placeholder img {
+        height: 80px;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .admin-sidebar {
+        background: var(--sidebar-bg);
+        color: #333;
+        min-height: calc(100vh - 80px);
+        padding: 0;
+        border-right: 2px solid #e9ecef;
+    }
+
+    .admin-sidebar .nav-link {
+        color: #555;
+        padding: 15px 20px;
+        border-left: 4px solid transparent;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+
+    .admin-sidebar .nav-link:hover {
+        color: var(--primary-color);
+        background: var(--sidebar-hover);
+        border-left-color: var(--primary-color);
+    }
+
+    .admin-sidebar .nav-link.active {
+        color: white;
+        background: var(--primary-color);
+        border-left-color: var(--primary-hover);
+    }
+
+    .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .sidebar-header {
+        background: white;
+        padding: 20px;
+        border-bottom: 2px solid #e9ecef;
+        text-align: center;
+    }
+
+    .sidebar-header h5 {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .sidebar-header small {
+        color: #666;
+    }
+
+    .btn-admin {
+        background: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin:hover {
+        background: white;
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-admin-outline {
+        background: white;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 25px;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-admin-outline:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-admin-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .btn-danger-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        border-radius: 20px;
+    }
+
+    .admin-title {
+        color: var(--primary-color);
+        font-weight: bold;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+    }
+
+    .selderey-text {
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .table th {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .action-buttons {
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .status-created { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #cce7ff; color: #004085; }
+    .status-shipped { background: #d1ecf1; color: #0c5460; }
+    .status-delivered { background: #d4edda; color: #155724; }
+    .status-canceled { background: #f8d7da; color: #721c24; }
+
+    .order-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary-color);
+        margin-bottom: 20px;
+    }
+
+    .user-avatar {
+        background: var(--primary-color) !important;
+    }
+
+    .order-item {
+        transition: background-color 0.2s ease;
+        border-left: 4px solid transparent;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+    }
+
+    .modal-card {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    }
+
+    .modal-card .card-header {
+        border-radius: 10px 10px 0 0;
+        border-bottom: 1px solid #dee2e6;
+        background: #f8f9fa;
+    }
+
+    .product-image-small {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .order-items-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .modal-lg-custom {
+        max-width: 900px;
+    }
+  </style>
+</head>
+<body>
+<header class="admin-header">
+  <div class="container">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/admin}">
+          <div class="logo-placeholder">
+            <img th:src="@{/pictures/logo.svg}" alt="аптека сельдерей">
+          </div>
+        </a>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <span class="selderey-text">администратор</span>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-admin dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-cog me-2"></i>управление
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>на главную</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>выйти</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar">
+      <div class="position-sticky">
+        <div class="sidebar-header">
+          <h5>панель управления</h5>
+          <small>аптекой сельдерей</small>
+        </div>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users">
+              <i class="fas fa-users"></i> пользователи
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/products">
+              <i class="fas fa-pills"></i> товары
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/admin/orders">
+              <i class="fas fa-shopping-cart"></i> заказы
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="admin-title mb-0">
+          <i class="fas fa-shopping-cart me-2"></i>управление заказами
+        </h2>
+        <span class="badge bg-primary fs-6">всего: <span th:text="${orders.size()}">0</span></span>
+      </div>
+      <div class="card">
+        <div class="card-header bg-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 admin-title">
+              <i class="fas fa-list me-2"></i>список заказов
+            </h5>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAllModal">
+              <i class="fas fa-trash me-2"></i>удалить все заказы
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>пользователь</th>
+                <th>дата заказа</th>
+                <th>сумма</th>
+                <th>статус</th>
+                <th>способ оплаты</th>
+                <th>адрес доставки</th>
+                <th>действия</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="order : ${orders}">
+                <td th:text="${order.id}">1</td>
+                <td>
+                  <strong th:text="${order.user.userName}">username</strong>
+                  <small class="d-block text-muted" th:text="${order.user.email}">email@example.com</small>
+                </td>
+                <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2024 12:00</td>
+                <td>
+                  <strong th:text="${#numbers.formatDecimal(order.total, 1, 2)} + ' ₽'">0.00 ₽</strong>
+                </td>
+                <td>
+                                    <span th:class="'status-badge status-' + ${order.shippingStatus.name().toLowerCase()}"
+                                          th:text="${order.shippingStatus.title}">
+                                        создан
+                                    </span>
+                </td>
+                <td th:text="${order.paymentMethod.title}">картой</td>
+                <td>
+                  <span th:if="${order.shippingAddress}" th:text="${order.shippingAddress}">адрес доставки</span>
+                  <span th:unless="${order.shippingAddress}" class="text-muted">не указан</span>
+                </td>
+                <td class="action-buttons">
+                  <button class="btn btn-admin btn-admin-sm me-1 view-order-btn"
+                          th:attr="data-order-id=${order.id}"
+                          data-bs-toggle="modal"
+                          data-bs-target="#viewOrderModal">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-admin btn-admin-sm me-1 edit-order-btn"
+                          th:attr="data-order-id=${order.id}"
+                          th:data-order-status="${order.shippingStatus}"
+                          th:data-order-payment="${order.paymentMethod}"
+                          th:data-order-address="${order.shippingAddress}"
+                          data-bs-toggle="modal"
+                          data-bs-target="#editOrderModal">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <form th:action="@{/admin/orders/{id}/delete(id=${order.id})}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-danger-sm"
+                            onclick="return confirm('удалить заказ?')">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <tr th:if="${orders.empty}">
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                  <p>заказы не найдены</p>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="modal fade" id="deleteAllModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">подтверждение удаления</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>вы уверены, что хотите удалить все заказы?</p>
+        <p class="text-muted small">это действие нельзя отменить</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <form th:action="@{/admin/orders/delete-all}" method="post">
+          <button type="submit" class="btn btn-danger">удалить все</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="viewOrderModal" tabindex="-1">
+  <div class="modal-dialog modal-lg-custom">
+    <div class="modal-content modal-card">
+      <div class="modal-header">
+        <h5 class="modal-title selderey-text">
+          <i class="fas fa-receipt me-2"></i>детали заказа
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="orderDetailsContent">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">загрузка...</span>
+          </div>
+          <p class="mt-2 text-muted">загрузка деталей заказа...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-admin-outline" data-bs-dismiss="modal">
+          <i class="fas fa-times me-2"></i>закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editOrderModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title selderey-text">редактирование заказа</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form th:action="@{/admin/orders/update}" method="post" id="editOrderForm">
+          <input type="hidden" name="id" id="editOrderId">
+          <div class="mb-3">
+            <label class="form-label">статус заказа</label>
+            <select class="form-control" name="shippingStatus" id="editOrderStatus" required>
+              <option value="CREATED">создан</option>
+              <option value="CONFIRMED">в обработке</option>
+              <option value="SHIPPED">отправлен</option>
+              <option value="DELIVERED">доставлен</option>
+              <option value="CANCELED">отменен</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">способ оплаты</label>
+            <select class="form-control" name="paymentMethod" id="editOrderPayment" required>
+              <option value="CASH">наличными</option>
+              <option value="CARD">картой</option>
+              <option value="ONLINE">онлайн</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">адрес доставки</label>
+            <textarea class="form-control" name="shippingAddress" id="editOrderAddress" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">отмена</button>
+        <button type="submit" form="editOrderForm" class="btn btn-admin">сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const viewButtons = document.querySelectorAll('.view-order-btn');
+      viewButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              const orderId = this.getAttribute('data-order-id');
+              const modalContent = document.getElementById('orderDetailsContent');
+              modalContent.innerHTML = `
+                  <div class="text-center py-4">
+                      <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">загрузка...</span>
+                      </div>
+                      <p class="mt-2 text-muted">загрузка деталей заказа...</p>
+                  </div>
+              `;
+              fetch('/admin/orders/' + orderId + '/details')
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error('ошибка загрузки');
+                      }
+                      return response.text();
+                  })
+                  .then(html => {
+                      modalContent.innerHTML = html;
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      modalContent.innerHTML = `
+                          <div class="alert alert-danger border-0">
+                              <div class="d-flex align-items-center">
+                                  <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                  <div>
+                                      <h6 class="alert-heading mb-1">ошибка загрузки</h6>
+                                      <p class="mb-0">не удалось загрузить детали заказа. пожалуйста, попробуйте еще раз.</p>
+                                  </div>
+                              </div>
+                          </div>
+                      `;
+                  });
+          });
+      });
+      const editButtons = document.querySelectorAll('.edit-order-btn');
+      editButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              const orderId = this.getAttribute('data-order-id');
+              const orderStatus = this.getAttribute('data-order-status');
+              const orderPayment = this.getAttribute('data-order-payment');
+              const orderAddress = this.getAttribute('data-order-address');
+
+              document.getElementById('editOrderId').value = orderId;
+              document.getElementById('editOrderStatus').value = orderStatus;
+              document.getElementById('editOrderPayment').value = orderPayment;
+              document.getElementById('editOrderAddress').value = orderAddress || '';
+          });
+      });
+      const editModal = document.getElementById('editOrderModal');
+      editModal.addEventListener('hidden.bs.modal', function() {
+          document.getElementById('editOrderForm').reset();
+      });
+      const viewModal = document.getElementById('viewOrderModal');
+      viewModal.addEventListener('hidden.bs.modal', function() {
+          document.getElementById('orderDetailsContent').innerHTML = `
+              <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">загрузка...</span>
+                  </div>
+                  <p class="mt-2 text-muted">загрузка деталей заказа...</p>
+              </div>
+          `;
+      });
+  });
+</script>
+</body>
+</html>

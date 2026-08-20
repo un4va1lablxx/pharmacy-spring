@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: pharmacy-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pharmacy_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d pharmacy_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pharmacy-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pharmacy-web-service
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://postgres-db:5432/pharmacy_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
