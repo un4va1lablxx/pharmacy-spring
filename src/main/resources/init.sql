@@ -55,8 +55,6 @@ INSERT INTO public.cart_items (quantity, id, product_id, user_id) VALUES (1, '50
 INSERT INTO public.cart_items (quantity, id, product_id, user_id) VALUES (1, 'b6d7f1d2-55a5-4f62-a14e-20b7a0479286', '660e8400-e29b-41d4-a716-446655440005', '0d6afef4-62ca-492b-93d4-72146c6ac924');
 INSERT INTO public.cart_items (quantity, id, product_id, user_id) VALUES (3, '191f2b81-f0f8-4574-b5f7-a34b4ea7ef18', '660e8400-e29b-41d4-a716-446655440007', '556fa270-39e4-40ec-9d47-0189fdc94870');
 INSERT INTO public.cart_items (quantity, id, product_id, user_id) VALUES (1, '5fbb8221-9ca2-4219-8da3-21e7ce455597', '660e8400-e29b-41d4-a716-446655440007', '7587b4f8-8bb1-4e19-8e13-936f419c525b');
-INSERT INTO public.cart_items (quantity, id, product_id, user_id) VALUES (3, '95f42695-8f87-4ea4-9637-1c61634e2e54', '660e8400-e29b-41d4-a716-446655440005', '404f72fa-6aea-4c11-ab2a-756dece8179e');
-
 
 INSERT INTO public.order_items (quantity, id, order_id, product_id) VALUES (1, '03c3cdcb-c03f-48d8-98a2-cd50e56bd5eb', '3f199e34-8fdb-4e96-bbe0-771895a2b899', '660e8400-e29b-41d4-a716-446655440001');
 INSERT INTO public.order_items (quantity, id, order_id, product_id) VALUES (1, '803065dd-e16a-40e7-bc64-495217592548', '3f199e34-8fdb-4e96-bbe0-771895a2b899', '660e8400-e29b-41d4-a716-446655440005');
@@ -92,7 +90,7 @@ INSERT INTO public.users (id, email, first_name, last_name, middle_name, passwor
 INSERT INTO public.users (id, email, first_name, last_name, middle_name, password_hash, phone, username) VALUES ('556fa270-39e4-40ec-9d47-0189fdc94870', 'vkatsap@outlook.com', 'Владимир', 'Кацап', 'Евгеньевич', '$2a$10$1FutH5uKSosGSQHtpmvkDeZ.IhOxTjAN9whPqyWOw.57Svc66./bW', '+7 (911) 911-91-91', 'vkatsap');
 INSERT INTO public.users (id, email, first_name, last_name, middle_name, password_hash, phone, username) VALUES ('7587b4f8-8bb1-4e19-8e13-936f419c525b', 'lleftalittle@gmail.com', 'Юлия', 'Минакова', 'Дмитриевна', '$2a$10$xyYEhIAFfGVRmW8bQ5DQf.bEXFmy4CyotaOVKFQkiOpbBE5gFYDAW', '+7 (920) 231-31-69', 'lleftalittle');
 INSERT INTO public.users (id, email, first_name, last_name, middle_name, password_hash, phone, username) VALUES ('0d6afef4-62ca-492b-93d4-72146c6ac924', 'lidiya1962@mail.ru', 'Лилия', 'Карданова', 'севастьяновна', '$2a$10$RDm.kTDiPuqulUHVUqjC6e8Ri1r7elKpNuhdaqlNm0zwHQUr3ubZi', '+7 (934) 399-18-44', 'lidiya1962');
-INSERT INTO public.users (id, email, first_name, last_name, middle_name, password_hash, phone, username) VALUES ('404f72fa-6aea-4c11-ab2a-756dece8179e', 'un4va1lablxx@gmail.com', 'Иван', 'Белкин', 'Витальевич', '$2a$10$KIuLQR6Dye1G4lEDa1Sr0OzqDAa5oiOsbXvkcclnGBqXa92gsYooq', '+7 (192) 011-22-33', 'user');
+INSERT INTO public.users (id, email, first_name, last_name, middle_name, password_hash, phone, username) VALUES ('c5c4da3b-392e-4137-b01f-9cda19f2bcde', 'un4va1lablxx@gmail.com', 'Иван', 'Белкин', 'Витальевич', '$2a$10$n2F.eZU1IrYoPgA.R/ohUu1/CjG9X/TPI86LSkv9LNvJX28t84zPG', '+7 (192) 011-22-33', 'user');
 
 
 ALTER TABLE ONLY public.cart_items
