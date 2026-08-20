@@ -14,6 +14,7 @@
 mvnw
 mvnw.cmd
 .gradle/
+gradle
 gradlew
 gradlew.bat
 
